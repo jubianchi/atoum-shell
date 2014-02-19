@@ -1,0 +1,16 @@
+{
+    "name": "atoum/shell",
+    "require": {
+        "atoum/atoum": "*@dev",
+        "hoa/console": "*@dev",
+        "hoa/core": "*@dev",
+        "hoa/string": "*@dev",
+        "hoa/stream": "*@dev"
+    },
+    "authors": [
+        {
+            "name": "jubianchi",
+            "email": "contact@jubianchi.fr"
+        }
+    ]
+}
