@@ -7,10 +7,22 @@
         "hoa/string": "*@dev",
         "hoa/stream": "*@dev"
     },
+    "require-dev": {
+        "fabpot/php-cs-fixer": "*"
+    },
     "authors": [
         {
             "name": "jubianchi",
             "email": "contact@jubianchi.fr"
         }
-    ]
+    ],
+    "bin": [
+        "bin/shell"
+    ],
+    "config": {
+        "bin-dir": "bin"
+    },
+    "autoload" : {
+        "files": ["classes/autoloader.php"]
+    }
 }

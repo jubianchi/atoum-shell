@@ -1,0 +1,8 @@
+#!/usr/bin/env php
+<?php
+
+define('mageekguy\atoum\shell\scripts\runner', __FILE__);
+
+require_once __DIR__ . '/../scripts/shell.php';
+
+?>
