@@ -2,17 +2,19 @@
 
 namespace atoum\shell\input\handlers;
 
+use atoum\shell\killable;
 use Hoa\Console\Readline\Autocompleter\Word;
 use Hoa\Console\Readline\Readline;
 use atoum\shell;
 use atoum\shell\input\handler;
 use mageekguy\atoum\writers\std\out;
 
-class command extends handler
+class command extends handler implements killable
 {
     protected $readline;
     protected $output;
     protected $commands = array();
+    protected $command;
 
     public function __construct(array $commands = array(), Readline $readline = null, out $output = null)
     {
@@ -64,12 +66,16 @@ class command extends handler
 
             if (preg_match('/^:(?:' . $identifier . ')(?:\s+|$)(?P<input>.*)$/', $line, $matches))
             {
-                $input->setLine(ltrim($input->getLine(), ':'));
+                $input->setLine($matches['input']);
 
-                $command->run(
+                $this->command = $command;
+
+                $this->command->run(
                     $this->readline,
                     $this->output
                 );
+
+                $this->command = null;
 
                 return $this;
             }
@@ -78,7 +84,38 @@ class command extends handler
         throw new \badMethodCallException(sprintf('Unknown command %s', $input));
     }
 
-    public function complete($prefix)
+    public function kill($signal = null)
+    {
+        if (null !== $this->command && $this->command instanceof killable)
+        {
+            $this->command->kill($signal);
+        }
+    }
+
+    public function getWordDefinition()
+    {
+        $line = $this->readline->getLine();
+
+        if (preg_match('/^:(?P<name>\w*?)$/', $line, $matches) > 0)
+        {
+            return '^\:\w*$';
+        }
+
+        if (preg_match('/^:(?P<name>.*?)\s+(?P<args>.*)$/', $line, $matches) > 0)
+        {
+            foreach ($this->commands as $command)
+            {
+                if ($command->getName() === $matches['name'] || $command->getShortcut() === $matches['name'])
+                {
+                    return $command->getWordDefinition();
+                }
+            }
+        }
+
+        return parent::getWordDefinition();
+    }
+
+    public function complete(& $prefix)
     {
         $words = array();
         $line = $this->readline->getLine();
@@ -96,7 +133,7 @@ class command extends handler
 
         foreach ($this->commands as $command)
         {
-            $words[] = ($prefix === ':' ? ':' : '') . $command->getName();
+            $words[] = ':' . $command->getName();
         }
 
         $autocomplete = new Word($words);

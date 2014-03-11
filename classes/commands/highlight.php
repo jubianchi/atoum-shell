@@ -2,6 +2,7 @@
 
 namespace atoum\shell\commands;
 
+use Hoa\Console\Readline\Autocompleter\Path;
 use Hoa\Console\Readline\Readline;
 use atoum\shell\command;
 use atoum\shell\cli;
@@ -11,11 +12,25 @@ use mageekguy\atoum\writers\std\out;
 
 class highlight extends command
 {
+    protected $cli;
+    protected $completer;
+
     public function __construct(cli\command $command = null, adapter $adapter = null)
     {
         parent::__construct($adapter);
 
         $this->cli = $command ?: new cli\command();
+        $this->completer = new Path(
+            null,
+            function($path) {
+                $factory = new factory();
+
+                return $factory
+                    ->refuseDots()
+                    ->getIterator(realpath($path))
+                ;
+            }
+        );
     }
 
     public function getName()
@@ -56,38 +71,17 @@ class highlight extends command
         }
     }
 
-    public function complete($prefix)
+    public function getWordDefinition()
     {
-        $separator = strrpos($prefix, DIRECTORY_SEPARATOR);
-        $separator = $separator === false ? null : $separator + 1;
+        $completer = new Path();
 
-        if ($separator !== null)
-        {
-            $dir = substr($prefix, 0, $separator);
-            $prefix = substr($prefix, $separator) ?: '';
-        }
-        else
-        {
-            $dir = dirname($prefix);
-        }
+        return $completer->getWordDefinition();
+    }
 
-        $factory = new factory();
-        $iterator = $factory
-            ->refuseDots()
-            ->getIterator($dir)
-        ;
+    public function complete(& $prefix)
+    {
+        $completer = new Path();
 
-        $directories = null;
-        foreach ($iterator as $entry)
-        {
-            $basename = $entry->getBasename();
-
-            if ($prefix === '' || strpos($basename, $prefix) === 0)
-            {
-                $directories[] = $basename;
-            }
-        }
-
-        return sizeof($directories) === 1 ? current($directories) : $directories;
+        return $completer->complete($prefix);
     }
 }

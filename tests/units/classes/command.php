@@ -51,8 +51,9 @@ class command extends atoum\test
                 $this->mockGenerator->orphanize('__construct'),
                 $command = new \mock\atoum\shell\command()
             )
+            ->and($line = uniqid())
             ->then
-                ->variable($command->complete(uniqid()))->isNull()
+                ->variable($command->complete($line))->isNull()
         ;
     }
 

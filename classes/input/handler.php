@@ -11,7 +11,12 @@ abstract class handler implements Autocompleter
     abstract public function supports(Readline $input);
     abstract public function handle(Readline $input, out $output);
 
-    public function complete($prefix)
+    public function getWordDefinition()
+    {
+        return '.*';
+    }
+
+    public function complete(& $prefix)
     {
         return null;
     }

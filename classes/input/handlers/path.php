@@ -12,11 +12,24 @@ use mageekguy\atoum\writers\std\out;
 
 class path extends handler implements killable
 {
+    protected $readline;
     protected $command;
 
-    public function __construct(commands\run $command = null)
+    public function __construct(Readline $readline, commands\run $command = null)
     {
+        $this->readline = $readline;
         $this->command = $command ?: new commands\run();
+        $this->completer = new \Hoa\Console\Readline\Autocompleter\Path(
+            null,
+            function($path) {
+                $factory = new factory();
+
+                return $factory
+                    ->refuseDots()
+                    ->getIterator(realpath($path))
+                ;
+            }
+        );
     }
 
     public function supports(Readline $input)
@@ -37,43 +50,13 @@ class path extends handler implements killable
         return $this->command->kill($signal);
     }
 
-    public function complete($prefix)
+    public function getWordDefinition()
     {
-        $separator = strrpos($this->readline->getLine(), DIRECTORY_SEPARATOR);
-        $separator = $separator === false ? null : $separator + 1;
+        return $this->completer->getWordDefinition();
+    }
 
-        if ($separator !== null)
-        {
-            $dir = substr($this->readline->getLine(), 0, $separator);
-            $prefix = substr($this->readline->getLine(), $separator) ?: '';
-        }
-        else
-        {
-            $dir = dirname($this->readline->getLine());
-        }
-
-        if (is_dir($dir) === false)
-        {
-            $dir = dirname($dir);
-        }
-
-        $factory = new factory();
-        $iterator = $factory
-            ->refuseDots()
-            ->getIterator(realpath($dir))
-        ;
-
-        $directories = null;
-        foreach ($iterator as $entry)
-        {
-            $basename = $entry->getBasename();
-
-            if ($prefix === '' || strpos($basename, $prefix) === 0)
-            {
-                $directories[] = ($separator === strlen($this->readline->getLine()) ? '/' : '') . $basename;
-            }
-        }
-
-        return sizeof($directories) === 1 ? current($directories) : $directories;
+    public function complete(& $prefix)
+    {
+        return $this->completer->complete($prefix);
     }
 }

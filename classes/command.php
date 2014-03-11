@@ -28,7 +28,12 @@ abstract class command implements Autocompleter
         return null;
     }
 
-    public function complete($prefix)
+    public function getWordDefinition()
+    {
+        return '.*';
+    }
+
+    public function complete(& $prefix)
     {
         return null;
     }

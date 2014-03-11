@@ -2,6 +2,7 @@
 
 namespace atoum\shell;
 
+use Hoa\Console\Readline\Autocompleter\Aggregate;
 use mageekguy\atoum;
 use atoum\shell;
 use Hoa\Console\Readline\Readline;
@@ -136,7 +137,7 @@ class runner extends atoum\cli implements killable, atoum\observable
                     new shell\commands\help(),
                     new shell\commands\version(),
                     new shell\commands\clear(),
-                    new shell\commands\run(),
+                    $run = new shell\commands\run(),
                     new shell\commands\editor(),
                     new shell\commands\nyancat(),
                     new shell\commands\cd(),
@@ -150,10 +151,11 @@ class runner extends atoum\cli implements killable, atoum\observable
                 $this->output
             ),
             new shell\input\handlers\shell($this->pool, $this->readline, $this->output),
-            new shell\input\handlers\path(new shell\commands\run()),
+            new shell\input\handlers\path($this->readline, $run),
             new shell\input\handlers\code()
         );
-        $this->readline->setAutocompleter(new shell\input\completer($this->readline, $handlers));
+
+        $this->readline->setAutocompleter(new Aggregate($handlers));
 
         while (true)
         {

@@ -86,12 +86,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/hoaproject/Console.git",
-                "reference": "5f2fbfdea1e433b3625a3c70798b8d1050e73fea"
+                "reference": "e03b33f513d8d8b01aaa031079770854f2e8c2ee"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hoaproject/Console/zipball/5f2fbfdea1e433b3625a3c70798b8d1050e73fea",
-                "reference": "5f2fbfdea1e433b3625a3c70798b8d1050e73fea",
+                "url": "https://api.github.com/repos/hoaproject/Console/zipball/e03b33f513d8d8b01aaa031079770854f2e8c2ee",
+                "reference": "e03b33f513d8d8b01aaa031079770854f2e8c2ee",
                 "shasum": ""
             },
             "require": {
@@ -140,7 +140,7 @@
                 "readline",
                 "window"
             ],
-            "time": "2014-02-25 08:58:19"
+            "time": "2014-03-11 13:29:13"
         },
         {
             "name": "hoa/core",

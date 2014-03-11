@@ -2,6 +2,7 @@
 
 namespace atoum\shell\commands;
 
+use Hoa\Console\Readline\Autocompleter\Path;
 use Hoa\Console\Readline\Readline;
 use atoum\shell\command;
 use atoum\shell\killable;
@@ -17,6 +18,17 @@ class run extends command implements killable
     public function __construct(executor\test $executor = null)
     {
         $this->executor = $executor ?: new executor\test();
+        $this->completer = new Path(
+            null,
+            function($path) {
+                $factory = new factory();
+
+                return $factory
+                    ->refuseDots()
+                    ->getIterator(realpath($path))
+                ;
+            }
+        );
     }
 
     public function getName()
@@ -42,38 +54,13 @@ class run extends command implements killable
         return $this->executor->kill($signal);
     }
 
-    public function complete($prefix)
+    public function getWordDefinition()
     {
-        $separator = strrpos($prefix, DIRECTORY_SEPARATOR);
-        $separator = $separator === false ? null : $separator + 1;
+        return $this->completer->getWordDefinition();
+    }
 
-        if ($separator !== null)
-        {
-            $dir = substr($prefix, 0, $separator);
-            $prefix = substr($prefix, $separator) ?: '';
-        }
-        else
-        {
-            $dir = dirname($prefix);
-        }
-
-        $factory = new factory();
-        $iterator = $factory
-            ->refuseDots()
-            ->getIterator($dir)
-        ;
-
-        $directories = null;
-        foreach ($iterator as $entry)
-        {
-            $basename = $entry->getBasename();
-
-            if ($prefix === '' || strpos($basename, $prefix) === 0)
-            {
-                $directories[] = $basename;
-            }
-        }
-
-        return sizeof($directories) === 1 ? current($directories) : $directories;
+    public function complete(& $prefix)
+    {
+        return $this->completer->complete($prefix);
     }
 }
