@@ -21,7 +21,7 @@ class highlight extends command
 
         $this->cli = $command ?: new cli\command();
         $this->completer = new Path(
-            null,
+            Path::PWD,
             function($path) {
                 $factory = new factory();
 
