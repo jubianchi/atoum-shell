@@ -18,7 +18,7 @@ class cd extends command
         parent::__construct($adapter);
 
         $this->completer = new Path(
-            null,
+            Path::PWD,
             function($path) {
                 $factory = new factory();
 

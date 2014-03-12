@@ -19,7 +19,7 @@ class run extends command implements killable
     {
         $this->executor = $executor ?: new executor\test();
         $this->completer = new Path(
-            null,
+            Path::PWD,
             function($path) {
                 $factory = new factory();
 
