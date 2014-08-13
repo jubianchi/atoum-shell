@@ -232,6 +232,8 @@ class command implements killable
             $pipes[0] = array('pipe', 'r');
         }
 
+        $this->stdErr = null;
+        $this->stdOut = null;
         $this->processus = @call_user_func_array(array($this->adapter, 'proc_open'), array((string) $this, $pipes, & $this->streams, null, sizeof($this->env) <= 0 ? null : $this->env));
 
         if ($this->processus === false)

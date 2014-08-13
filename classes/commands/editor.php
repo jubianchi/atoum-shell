@@ -23,6 +23,11 @@ class editor extends execute
         return 'e';
     }
 
+    public function getMapping()
+    {
+        return '\C-i';
+    }
+
     public function run(Readline $input, out $output)
     {
         if (preg_match('/^!$/', $input->getLine()) || isset(static::$buffer) === false)

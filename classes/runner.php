@@ -125,7 +125,7 @@ class runner extends atoum\cli implements killable, atoum\observable
         // TODO: Implement getBootstrapFile() method.
     }
 
-    public function run()
+    public function run(shell\scripts\runner $runner)
     {
         $this->pool->add($this);
 
@@ -150,6 +150,7 @@ class runner extends atoum\cli implements killable, atoum\observable
                 $this->readline,
                 $this->output
             ),
+            new shell\input\handlers\source($runner, $this->readline, $this->output),
             new shell\input\handlers\shell($this->pool, $this->readline, $this->output),
             new shell\input\handlers\path($this->readline, $run),
             new shell\input\handlers\code()

@@ -38,7 +38,7 @@ class runner extends atoum\script\configurable
     {
         parent::run($arguments);
 
-        $this->runner->run();
+        $this->runner->run($this);
 
         return $this;
     }

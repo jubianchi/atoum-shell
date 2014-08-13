@@ -34,7 +34,7 @@ class path extends handler implements killable
 
     public function supports(Readline $input)
     {
-        return sizeof(glob($input->getLine() . '*')) > 0;
+        return $input->getLine() != '' && sizeof(glob($input->getLine() . '*')) > 0;
     }
 
     public function handle(Readline $input, out $output)

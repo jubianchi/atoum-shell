@@ -81,7 +81,7 @@ class command extends handler implements killable
             }
         }
 
-        throw new \badMethodCallException(sprintf('Unknown command %s', $input));
+        throw new \badMethodCallException(sprintf('Unknown command %s', $line));
     }
 
     public function kill($signal = null)
